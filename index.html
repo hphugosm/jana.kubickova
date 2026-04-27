@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jana Kubíčková | Osobní blog</title>
-    <!-- Načtení útulných a elegantních fontů -->
+    
+    <!-- Načtení fontů: Lora (text), Playfair (nadpisy) a CAVEAT (ručně psaný podpis) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
     
     <style>
-        /* Útulná paleta barev - starý papír a zemitá zelená */
+        /* PRÉMIOVÁ PALETA A PROMĚNNÉ */
         :root {
             --paper-bg: #EFECE6;
             --paper-card: rgba(248, 246, 242, 0.95);
@@ -21,6 +22,7 @@
             
             --font-headings: 'Playfair Display', serif;
             --font-body: 'Lora', serif;
+            --font-signature: 'Caveat', cursive; /* Nový font pro podpis */
         }
 
         * {
@@ -36,7 +38,6 @@
         body {
             font-family: var(--font-body);
             background-color: var(--paper-bg);
-            /* Jemná textura šumu pro efekt papíru */
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
             color: var(--text-dark);
             line-height: 1.8;
@@ -44,95 +45,129 @@
             overflow-x: hidden;
         }
 
-        /* PARALLAX Hlavička s 1.png */
+        /* Vylepšený výběr textu (co se stane, když uživatel označí text) */
+        ::selection {
+            background-color: var(--green-primary);
+            color: white;
+        }
+
+        /* PARALLAX Hlavička s image-5.png */
         header {
             position: relative;
             text-align: center;
-            padding: 8rem 1rem 6rem 1rem;
-            /* Načtení fotky přírody (1.png) s jemným světlým překryvem pro čitelnost textu */
-            background-image: linear-gradient(rgba(239, 236, 230, 0.75), rgba(239, 236, 230, 0.95)), url('image-5.png');
+            padding: 10rem 1rem 8rem 1rem;
+            background-image: linear-gradient(rgba(239, 236, 230, 0.65), rgba(239, 236, 230, 0.95)), url('image-5.png');
             background-attachment: fixed;
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
             border-bottom: 1px solid rgba(107, 142, 115, 0.3);
-            margin-bottom: 2rem;
         }
 
         header h1 {
             font-family: var(--font-headings);
-            font-size: 4rem;
+            font-size: 4.5rem;
             color: var(--green-dark);
             margin-bottom: 0.5rem;
             font-weight: 700;
+            letter-spacing: -1px;
             animation: fadeDown 1.5s ease-out;
         }
 
         header .ig-bio {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-style: italic;
             color: var(--green-dark);
             max-width: 600px;
             margin: 0 auto;
             letter-spacing: 0.5px;
-            animation: fadeIn 2s ease-out;
+            animation: fadeIn 2.5s ease-out;
             font-weight: 600;
         }
 
-        /* Animace při načtení stránky */
-        @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Navigace */
+        /* CHYTRÁ NAVIGACE (Při scrollu změní vzhled) */
         nav {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 20px;
-            padding: 1rem;
+            gap: 30px;
+            padding: 1.2rem;
             position: sticky;
             top: 0;
-            background-color: rgba(239, 236, 230, 0.85);
-            backdrop-filter: blur(10px);
-            z-index: 100;
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: transparent; /* Původně průhledná */
+        }
+
+        /* Třída přidaná přes JS po scrollu */
+        nav.scrolled {
+            background-color: rgba(239, 236, 230, 0.95);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.06);
             border-bottom: 1px solid rgba(107, 142, 115, 0.2);
-            transition: all 0.3s ease;
+            padding: 0.8rem;
+        }
+
+        /* Ukazatel čtení (Progress bar) v navigaci */
+        .progress-container {
+            width: 100%;
+            height: 3px;
+            background: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .progress-bar {
+            height: 3px;
+            background: var(--green-primary);
+            width: 0%;
         }
 
         nav a {
             color: var(--green-dark);
             text-decoration: none;
             font-weight: 600;
-            font-size: 1.1rem;
-            transition: color 0.3s, transform 0.2s;
+            font-size: 1rem;
+            transition: color 0.3s, transform 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             font-family: var(--font-headings);
+            position: relative;
         }
 
+        /* Linka pod odkazem, která plynule vyjede */
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 50%;
+            background-color: var(--coffee-accent);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        nav a:hover::after {
+            width: 100%;
+        }
         nav a:hover {
             color: var(--coffee-accent);
-            transform: translateY(-2px);
         }
 
         /* Hlavní obsah */
         .container {
-            max-width: 900px;
-            margin: 0 auto 2rem auto;
+            max-width: 950px;
+            margin: -3rem auto 2rem auto; /* Záporný margin ji "vtáhne" nahoru do fotky */
             padding: 0 20px;
+            position: relative;
+            z-index: 10;
         }
 
         /* Odkrývání při scrollu */
         .reveal {
             opacity: 0;
             transform: translateY(40px);
-            transition: opacity 1s ease-out, transform 1s ease-out;
+            transition: opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .reveal.visible {
             opacity: 1;
@@ -141,18 +176,18 @@
 
         .section {
             background-color: var(--paper-card);
-            border-radius: 12px;
-            padding: 3.5rem;
-            margin-bottom: 3rem;
-            box-shadow: 2px 4px 20px rgba(0,0,0,0.03), inset 0 0 40px rgba(200, 195, 185, 0.15);
+            border-radius: 15px;
+            padding: 4rem;
+            margin-bottom: 3.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.04), inset 0 0 50px rgba(200, 195, 185, 0.2);
             border: 1px solid #E5E0D5;
         }
 
         .section h2 {
             font-family: var(--font-headings);
             color: var(--green-dark);
-            font-size: 2.2rem;
-            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            margin-bottom: 2.5rem;
             text-align: center;
             position: relative;
         }
@@ -160,74 +195,111 @@
         .section h2::after {
             content: '';
             display: block;
-            width: 50px;
+            width: 60px;
             height: 3px;
-            background-color: var(--green-primary);
+            background-color: var(--coffee-accent); /* Změněno na hnědou pro lepší kontrast */
             margin: 15px auto 0 auto;
             border-radius: 2px;
         }
 
-        /* Rozložení s fotkami (Flexbox) */
+        /* Rozložení s fotkami */
         .content-flex {
             display: flex;
-            gap: 3rem;
+            gap: 4rem;
             align-items: center;
         }
-        
         .content-flex.reverse {
             flex-direction: row-reverse;
         }
-
         .text-content {
             flex: 1;
         }
 
         p {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
             text-align: justify;
+            font-size: 1.1rem;
         }
 
-        /* Styl polaroidových rámečků pro fotky */
-        .photo-frame {
-            background-color: #FDFCF9;
-            padding: 12px 12px 45px 12px;
-            box-shadow: 3px 6px 20px rgba(0,0,0,0.1);
-            border: 1px solid #E5E0D5;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-            max-width: 100%;
-            height: auto;
-            object-fit: cover;
-        }
-
-        .photo-frame:hover {
-            transform: rotate(0deg) scale(1.03) !important;
-            box-shadow: 5px 10px 25px rgba(0,0,0,0.15);
-            z-index: 10;
-        }
-
-        .pic-1 {
-            width: 280px;
+        /* OSOBNÍ PODPIS (Novinka) */
+        .signature {
+            font-family: var(--font-signature);
+            font-size: 2.5rem;
+            color: var(--green-dark);
+            text-align: right;
+            margin-top: 1rem;
             transform: rotate(-3deg);
         }
 
-        .pic-2 {
-            width: 280px;
-            transform: rotate(4deg);
+        /* PRÉMIOVÉ ZPRACOVÁNÍ FOTEK: Obal, Washi páska, Filtr a Levitace */
+        .photo-wrapper {
+            position: relative;
+            width: 320px;
+            /* Levitující animace (fotka jemně plave) */
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .pic-1 { --rot: -3deg; }
+        .pic-2 { --rot: 4deg; animation-delay: -3s; /* Každá fotka plave jinak */ }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(var(--rot)); }
+            50% { transform: translateY(-12px) rotate(var(--rot)); }
+            100% { transform: translateY(0px) rotate(var(--rot)); }
         }
 
-        /* Odkazy a seznamy */
+        /* Detail lepící pásky (Washi tape) */
+        .photo-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            width: 100px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            backdrop-filter: blur(2px);
+            z-index: 20;
+        }
+
+        .photo-frame {
+            background-color: #FDFCF9;
+            padding: 12px 12px 55px 12px; /* Větší prostor dole jako u pravého polaroidu */
+            box-shadow: 5px 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #E5E0D5;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            /* Vintage filtr, který se po najetí myší vyjasní */
+            filter: sepia(20%) contrast(90%) brightness(95%);
+            transition: filter 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .photo-wrapper:hover {
+            animation-play-state: paused; /* Zastaví levitaci při najetí */
+            z-index: 100;
+        }
+
+        .photo-wrapper:hover .photo-frame {
+            filter: sepia(0%) contrast(100%) brightness(100%);
+            box-shadow: 8px 15px 40px rgba(0,0,0,0.2);
+        }
+
+        /* Seznamy */
         .links-list {
             list-style: none;
             margin-top: 2rem;
-            padding: 1.5rem;
-            background-color: rgba(107, 142, 115, 0.05);
+            padding: 1.5rem 2rem;
+            background-color: rgba(107, 142, 115, 0.04);
             border-left: 4px solid var(--green-primary);
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 12px 12px 0;
+            position: relative;
         }
 
         .links-list li {
-            margin-bottom: 15px;
-            font-size: 1.1rem;
+            margin-bottom: 18px;
+            line-height: 1.5;
         }
 
         .links-list a {
@@ -235,7 +307,7 @@
             text-decoration: none;
             font-weight: 600;
             transition: color 0.3s;
-            border-bottom: 1px solid transparent;
+            border-bottom: 1px dashed var(--green-primary);
         }
 
         .links-list a:hover {
@@ -243,16 +315,15 @@
             border-bottom: 1px solid var(--coffee-accent);
         }
 
-        /* PARALLAX Oddělovač s 3.png (Káva) */
+        /* PARALLAX Oddělovač s image-3.png */
         .parallax-divider {
-            height: 350px;
-            /* Zelenavý překryv + fotka s kávou */
-            background-image: linear-gradient(rgba(107, 142, 115, 0.5), rgba(74, 99, 80, 0.7)), url('image-3.png');
+            height: 400px;
+            background-image: linear-gradient(rgba(107, 142, 115, 0.4), rgba(74, 99, 80, 0.8)), url('image-3.png');
             background-attachment: fixed;
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
-            margin: 4rem 0;
+            margin: 5rem 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -263,116 +334,136 @@
         .parallax-divider h3 {
             font-family: var(--font-headings);
             color: var(--paper-bg);
-            font-size: 2.8rem;
+            font-size: 3.2rem;
             letter-spacing: 2px;
-            text-shadow: 2px 2px 15px rgba(0,0,0,0.5);
+            font-style: italic;
+            text-shadow: 2px 4px 20px rgba(0,0,0,0.6);
         }
 
         /* Instagram sekce */
         .instagram-stats {
             text-align: center;
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-            color: var(--green-primary);
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+            color: var(--green-dark);
+            display: flex;
+            justify-content: center;
+            gap: 20px;
         }
         .instagram-stats span {
-            margin: 0 10px;
+            background: rgba(107, 142, 115, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
             font-weight: 600;
         }
-        .instagram-container {
-            text-align: center;
-            margin-top: 1.5rem;
-            border-radius: 8px;
-            padding: 1rem 0;
-        }
 
+        /* Prémie: Animované Tlačítko */
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background-color: var(--green-primary);
             color: white;
-            padding: 12px 35px;
-            border-radius: 30px;
+            padding: 15px 40px;
+            border-radius: 50px;
             text-decoration: none;
             font-family: var(--font-headings);
-            font-size: 1.1rem;
-            letter-spacing: 0.5px;
-            margin-top: 25px;
-            transition: all 0.4s ease;
-            box-shadow: 0 4px 10px rgba(107, 142, 115, 0.3);
+            font-size: 1.15rem;
+            letter-spacing: 1px;
+            margin-top: 30px;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(107, 142, 115, 0.3);
             position: relative;
             overflow: hidden;
+            z-index: 1;
         }
-        .btn::before {
+        .btn::after {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: rgba(255,255,255,0.15);
-            transition: left 0.4s ease;
+            bottom: 0; left: 0;
+            width: 100%; height: 0%;
+            background-color: var(--green-dark);
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: -1;
         }
-        .btn:hover::before {
-            left: 0;
+        .btn:hover::after {
+            height: 100%;
         }
         .btn:hover {
-            background-color: var(--green-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(107, 142, 115, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(107, 142, 115, 0.5);
             color: white;
         }
 
         /* Patička */
         footer {
             text-align: center;
-            padding: 3rem 1rem;
+            padding: 4rem 1rem;
             background-color: var(--green-dark);
             color: var(--paper-bg);
-            font-family: var(--font-headings);
-            font-size: 1.1rem;
+            font-family: var(--font-body);
+        }
+        footer p {
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        footer .footer-sig {
+            font-family: var(--font-signature);
+            font-size: 2rem;
+            color: var(--coffee-accent);
+            margin-bottom: 1rem;
         }
         footer a {
             color: var(--coffee-accent);
             text-decoration: none;
             transition: color 0.3s;
+            font-weight: 600;
         }
         footer a:hover {
             color: white;
+            text-decoration: underline;
         }
 
-        /* Responzivita pro mobily */
+        /* Startovací animace */
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-30px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Mobily */
         @media (max-width: 768px) {
             header, .parallax-divider {
-                background-attachment: scroll; /* Lepší výkon na mobilech */
+                background-attachment: scroll;
             }
-            header h1 {
-                font-size: 3rem;
-            }
-            .section {
-                padding: 2rem 1.5rem;
-            }
+            header h1 { font-size: 3.2rem; }
+            .section { padding: 2.5rem 1.5rem; }
             .content-flex, .content-flex.reverse {
                 flex-direction: column;
-                gap: 2rem;
+                gap: 3rem;
             }
-            .photo-frame {
-                max-width: 80%;
-                margin: 0 auto;
-                transform: rotate(0deg); /* Zrušení rotace na malých displejích */
-            }
-            .parallax-divider h3 {
-                font-size: 2rem;
-            }
+            .photo-wrapper { width: 90%; margin: 0 auto; }
+            .parallax-divider h3 { font-size: 2.2rem; }
+            .instagram-stats { flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 1.png (Jezero a les) je na pozadí v CSS hlavičky -->
+    <!-- Hlavička s image-5.png -->
     <header>
         <h1>Jana Kubíčková</h1>
         <p class="ig-bio">Wife & Mom of 3 | healthy lifestyle | coffee addict | Traveler | In❤️with Prague</p>
     </header>
 
-    <nav>
+    <!-- Chytrá navigace s ukazatelem čtení -->
+    <nav id="navbar">
+        <div class="progress-container">
+            <div class="progress-bar" id="myBar"></div>
+        </div>
         <a href="#o-mne">Něco o mně</a>
         <a href="#moje-prace">Moje práce</a>
         <a href="#instagram">Instagram</a>
@@ -380,23 +471,36 @@
 
     <div class="container">
         
-        <!-- Sekce: O mně + 2.png (Váš portrét) -->
+        <!-- Sekce: O mně + image-3.png -->
         <section id="o-mne" class="section reveal">
             <h2>Něco o mně</h2>
             <div class="content-flex">
-                <img src="image-3.png" alt="Jana Kubíčková" class="photo-frame pic-1">
+                
+                <!-- Prémiový obal fotky s washi páskou a levitací -->
+                <div class="photo-wrapper pic-1">
+                    <img src="image-3.png" alt="Jana Kubíčková" class="photo-frame">
+                </div>
+
                 <div class="text-content">
                     <p>Jsem mámou tří dětí, které mě každý den učí kreativitě, otevřenosti a trpělivosti. Jsem akční člověk a baví mě být venku za jakéhokoli počasí, užívat si s dětmi pohyb, objevování i hry v přírodě.</p>
                     <p>Zároveň dokážu zpomalit při klidnějších, rukodělných činnostech, ve kterých podporuji dětskou fantazii a jemnou motoriku. Káva, zdravý životní styl a cestování (hlavně má milovaná Praha) jsou pro mě každodenní radostí i zdrojem energie.</p>
+                    
+                    <!-- Ručně psaný podpis pro osobní přesah -->
+                    <p class="signature">S láskou, Jana.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Sekce: Práce a tým + 4.png (Zábavná fotka z výletu) -->
+        <!-- Sekce: Práce a tým + image-4.png -->
         <section id="moje-prace" class="section reveal">
             <h2>Moje práce</h2>
             <div class="content-flex reverse">
-                <img src="image-4.png" alt="Krásné momenty" class="photo-frame pic-2">
+                
+                <!-- Prémiový obal fotky -->
+                <div class="photo-wrapper pic-2">
+                    <img src="image-4.png" alt="Krásné momenty" class="photo-frame">
+                </div>
+
                 <div class="text-content">
                     <p>Své zkušenosti z mateřství si přináším i do <strong>ScioŠkoly</strong>, kde působím jako asistentka. Podporuji děti v jejich samostatnosti, pomáhám jim v každodenních situacích a snažím se být pro ně klidnou a spolehlivou oporou.</p>
                     <p>Baví mě prostředí, ve kterém jsou respekt, spolupráce a zvědavost základním kamenem učení. Těším se na vše nové, co se tu společně s dětmi i naším skvělým týmem naučíme.</p>
@@ -410,48 +514,72 @@
         </section>
     </div>
 
-    <!-- Parallax předělový pruh + 3.png (Vy s dcerou a drinkem/kávou) načtené přes CSS -->
+    <!-- Parallax předělový pruh + image-3.png načtené přes CSS -->
     <div class="parallax-divider reveal">
-        <h3>Radost z každodenních maličkostí</h3>
+        <h3>Radost z každodenních maličkostí...</h3>
     </div>
 
     <div class="container">
-        <!-- Sekce: Instagram Feed (Automatický widget) -->
+        <!-- Sekce: Instagram -->
         <section id="instagram" class="section reveal">
             <h2>@kubickovka</h2>
             <div class="instagram-stats">
-                <span>Příspěvky: 2 743</span> | <span>Sledující: 648</span> | <span>Sleduji: 2 680</span>
+                <span>Příspěvky: 2 743</span> 
+                <span>Sledující: 648</span> 
+                <span>Sleduji: 2 680</span>
             </div>
             
-            <p style="text-align: center;">Nahlédněte do mého každodenního života, cestování a radostí s rodinou.</p>
+            <p style="text-align: center; color: var(--green-primary); margin-bottom: 2rem;">
+                Nahlédněte do mého každodenního života, cestování a radostí s rodinou.
+            </p>
             
             <div class="instagram-container">
-                <!-- Elfsight Instagram Feed Widget -->
-                <script src="https://elfsightcdn.com/platform.js" async></script>
-                <div class="elfsight-app-865af6ad-d3fa-4f44-9a49-ec993d4cb0da" data-elfsight-app-lazy></div>
+                <!-- Elfsight Instagram Feed Widget (odstraněn lazy load pro lepší kompatibilitu) -->
+                <script src="https://elfsightcdn.com/platform.js" defer></script>
+                <div class="elfsight-app-865af6ad-d3fa-4f44-9a49-ec993d4cb0da"></div>
             </div>
             
             <div style="text-align: center;">
-                <a href="https://www.instagram.com/kubickovka/" target="_blank" class="btn">Sledovat na Instagramu</a>
+                <a href="https://www.instagram.com/kubickovka/" target="_blank" class="btn">Prohlédnout celý profil</a>
             </div>
         </section>
         
     </div>
 
     <footer>
-        <p>S láskou vytvořeno. &copy; 2026 Jana Kubíčková</p>
-        <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">
-            Najdete mě na <a href="https://www.instagram.com/kubickovka/" target="_blank">Instagramu</a> nebo na webu <a href="https://holesovice-zs.scioskola.cz" target="_blank">ScioŠkoly</a>.
+        <div class="footer-sig">Jana Kubíčková</div>
+        <p>&copy; 2026 Osobní blog. Všechna práva vyhrazena.</p>
+        <p style="font-size: 0.95rem; margin-top: 10px; opacity: 0.9;">
+            Spojme se na <a href="https://www.instagram.com/kubickovka/" target="_blank">Instagramu</a> nebo přes <a href="https://holesovice-zs.scioskola.cz" target="_blank">ScioŠkolu</a>.
         </p>
     </footer>
 
-    <!-- JavaScript pro automatické odkrývání prvků (Fade-in animace) -->
+    <!-- INTERAKTIVNÍ SCRIPTY (Navigace, Animace, Progress Bar) -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            
+            // 1. CHYTRÁ NAVIGACE A PROGRESS BAR
+            const navbar = document.getElementById("navbar");
+            window.onscroll = function() {
+                // Přidání mléčného pozadí navigaci po scrollu o 50px
+                if (window.scrollY > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+
+                // Výpočet ukazatele čtení (zelená linka nahoře)
+                var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                var scrolled = (winScroll / height) * 100;
+                document.getElementById("myBar").style.width = scrolled + "%";
+            };
+
+            // 2. PLYNULÉ ODKRÝVÁNÍ ELEMENTŮ (Fade-in)
             const observerOptions = {
                 root: null,
                 rootMargin: '0px',
-                threshold: 0.15 
+                threshold: 0.12 
             };
 
             const observer = new IntersectionObserver((entries, observer) => {
